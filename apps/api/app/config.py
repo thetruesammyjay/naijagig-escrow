@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 	stellar_network: str = Field(default="testnet", alias="STELLAR_NETWORK")
 	jwt_secret: str = Field(alias="JWT_SECRET")
 	jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
-	access_token_expire_minutes: int = Field(default=15, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
+	access_token_expire_minutes: int = Field(default=10080, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
 	refresh_token_expire_days: int = Field(default=7, alias="REFRESH_TOKEN_EXPIRE_DAYS")
 	frontend_origin: str = Field(default="http://localhost:3000", alias="FRONTEND_ORIGIN")
 	api_v1_prefix: str = "/api/v1"

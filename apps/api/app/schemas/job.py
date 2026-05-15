@@ -9,37 +9,42 @@ from app.schemas.milestone import MilestoneCreate, MilestoneRead
 class JobBase(BaseModel):
 	title: str
 	description: str
-	total_amount: Decimal
+	total_amount: Decimal = Field(alias="totalAmount")
 
 
 class JobCreate(JobBase):
-	client_id: str
-	freelancer_id: str | None = None
+	model_config = ConfigDict(populate_by_name=True)
+
+	freelancer_id: str | None = Field(default=None, alias="freelancerId")
 	milestones: list[MilestoneCreate] = Field(default_factory=list)
 
 	@model_validator(mode="after")
 	def validate_milestone_amounts(self) -> "JobCreate":
-		total = sum((milestone.amount for milestone in self.milestones), Decimal("0"))
-		if total != self.total_amount:
-			raise ValueError("Milestone amounts must equal total_amount")
+		if self.milestones:
+			total = sum((milestone.amount for milestone in self.milestones), Decimal("0"))
+			if total != self.total_amount:
+				raise ValueError("Milestone amounts must equal total_amount")
 		return self
 
 
 class JobUpdate(BaseModel):
 	title: str | None = None
 	description: str | None = None
-	freelancer_id: str | None = None
+	freelancer_id: str | None = Field(default=None, alias="freelancerId")
 
 
-class JobRead(JobBase):
-	model_config = ConfigDict(from_attributes=True)
+class JobRead(BaseModel):
+	model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 	id: str
-	client_id: str
-	freelancer_id: str | None
+	client_id: str = Field(alias="clientId")
+	freelancer_id: str | None = Field(default=None, alias="freelancerId")
+	title: str
+	description: str
+	total_amount: Decimal = Field(alias="totalAmount")
 	status: str
-	escrow_id: str | None
-	contract_address: str | None
+	escrow_id: str | None = Field(default=None, alias="escrowId")
+	contract_address: str | None = Field(default=None, alias="contractAddress")
 	milestones: list[MilestoneRead] = Field(default_factory=list)
-	created_at: datetime
-	updated_at: datetime
+	created_at: datetime = Field(alias="createdAt")
+	updated_at: datetime = Field(alias="updatedAt")
