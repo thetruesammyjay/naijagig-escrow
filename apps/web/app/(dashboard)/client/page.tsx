@@ -13,12 +13,12 @@ function calcStats(jobs: Job[]) {
 
   const totalInEscrow = jobs
     .flatMap((j) => j.milestones)
-    .filter((m) => m.status === "FUNDED" || m.status === "IN_PROGRESS" || m.status === "PENDING_REVIEW")
+    .filter((m) => m.status === "FUNDED" || m.status === "IN_PROGRESS" || m.status === "SUBMITTED")
     .reduce((sum, m) => sum + Number(m.amount), 0);
 
   const pendingReview = jobs
     .flatMap((j) => j.milestones)
-    .filter((m) => m.status === "PENDING_REVIEW")
+    .filter((m) => m.status === "SUBMITTED")
     .length;
 
   return { activeJobs, totalInEscrow, pendingReview };

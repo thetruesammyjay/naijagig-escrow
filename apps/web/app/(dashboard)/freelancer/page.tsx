@@ -44,7 +44,7 @@ export default function FreelancerDashboard() {
     .flatMap((j) =>
       j.milestones
         .filter((m) =>
-          (["FUNDED", "IN_PROGRESS", "PENDING_REVIEW"] as MilestoneStatus[]).includes(m.status)
+          (["FUNDED", "IN_PROGRESS", "SUBMITTED"] as MilestoneStatus[]).includes(m.status)
         )
         .map((m) => ({ ...m, jobTitle: j.title }))
     )
@@ -159,12 +159,12 @@ export default function FreelancerDashboard() {
               const statusColor: Record<string, string> = {
                 IN_PROGRESS: "text-blue-600 bg-blue-50",
                 FUNDED: "text-green-600 bg-green-50",
-                PENDING_REVIEW: "text-yellow-600 bg-yellow-50",
+                SUBMITTED: "text-yellow-600 bg-yellow-50",
               };
               const statusLabel: Record<string, string> = {
                 IN_PROGRESS: "In Progress",
                 FUNDED: "Funded",
-                PENDING_REVIEW: "Pending Review",
+                SUBMITTED: "Pending Review",
               };
               return (
                 <div
