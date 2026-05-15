@@ -16,7 +16,8 @@ export default function Navbar() {
   const dashboardHref = role === "freelancer" ? "/freelancer" : "/client";
 
   const navLinks = [
-    { name: "Home", href: "/" }
+    { name: "Home", href: "/" },
+    { name: "Contact", href: "/contact" }
   ];
 
   return (
