@@ -37,7 +37,7 @@ export default function RootLayout({
           <main className="flex-grow pt-24">
             {children}
           </main>
-          <Footer />
+          {/* <Footer /> */}
         </Providers>
       </body>
     </html>
