@@ -2,7 +2,7 @@
 FILE_STRUCTURE.md
 CONTEXT.md
 design-inspo.html
-
+deployment_guide.md
 # ─── Node ────────────────────────────────────────────────────────────────────
 node_modules/
 .pnpm-store/
