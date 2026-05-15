@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1E7F43;
+  --color-secondary: #156A37;
+  --color-accent: #FCD34D;
+  --color-darkgrey: #2E2E2E;
+
+  --font-bricolage: "Bricolage Grotesque", sans-serif;
+  --font-outfit: "Outfit", sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-outfit);
+    background-color: #F9FAFB;
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    background: linear-gradient(135deg, #156A37 0%, #1E7F43 50%, #F59E0B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .nav-blob {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(30, 127, 67, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  }
+
+  .hover-scale:hover { 
+    transform: scale(1.05); 
+  }
+
+  .float-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .float-delay-1 {
+    animation-delay: 2s;
+  }
+  
+  .float-delay-2 {
+    animation-delay: 4s;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+
+  .feature-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(30, 127, 67, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .feature-card:hover {
+    border-color: rgba(30, 127, 67, 0.4);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(30, 127, 67, 0.1);
+  }
+
+  .bg-grid {
+    background-image: 
+        linear-gradient(rgba(30, 127, 67, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 127, 67, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .input-group:focus-within i {
+      color: var(--color-primary);
+  }
+
+  .input-group:focus-within input,
+  .input-group:focus-within select {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 4px rgba(30, 127, 67, 0.1);
+  }
+}
