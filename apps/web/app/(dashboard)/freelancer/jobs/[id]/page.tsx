@@ -170,7 +170,7 @@ export default function FreelancerJobDetailPage() {
               />
               {/* Inline submission form */}
               {activeSubmit === milestone.id &&
-                milestone.status === "PENDING" && (
+                (milestone.status === "PENDING" || milestone.status === "FUNDED" || milestone.status === "IN_PROGRESS") && (
                   <div className="mb-4 p-4 bg-orange-50 border border-orange-200 rounded-xl space-y-3">
                     <p className="text-sm font-semibold text-orange-800">
                       Submit Milestone for Review

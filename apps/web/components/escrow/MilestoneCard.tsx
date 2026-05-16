@@ -89,7 +89,7 @@ export function MilestoneCard({
         </div>
       )}
 
-      {!isClient && (milestone.status === "FUNDED" || milestone.status === "IN_PROGRESS") && (
+      {!isClient && (milestone.status === "PENDING" || milestone.status === "FUNDED" || milestone.status === "IN_PROGRESS") && (
         <div className="flex justify-end mt-4 pt-3 border-t border-gray-50">
           <button
             onClick={() => onSubmit?.(milestone.id)}
