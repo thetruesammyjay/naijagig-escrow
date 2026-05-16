@@ -31,33 +31,43 @@ export function useWallet() {
   const [status, setStatus] = useState<WalletStatus>("idle");
   const [error, setError] = useState<string | null>(null);
 
-  // Check installation + existing connection on mount
+  // Check installation + existing connection on mount.
+  // IMPORTANT: Freighter does NOT inject window.freighter.
+  // The only reliable detection method is calling isConnected() from
+  // @stellar/freighter-api, which communicates with the extension via
+  // Chrome's internal messaging API. We give the extension 300ms to
+  // initialise before querying it.
   useEffect(() => {
     const checkOnMount = async () => {
       if (typeof window === "undefined") return;
 
-      // Detect if extension is installed first
-      const isInstalled = (window as any).freighter !== undefined;
-      if (!isInstalled) {
-        setStatus("not_installed");
-        return;
-      }
+      // Small delay: extensions may not be injected synchronously on page load
+      await new Promise((r) => setTimeout(r, 300));
 
-      // If installed, check if already connected (persists across page navigations)
       try {
         const { isConnected, getAddress } = await import(
           "@stellar/freighter-api"
         );
+
+        // isConnected() returns { isConnected: boolean } when the extension IS
+        // present. It throws (or returns isConnected: false) if not installed.
         const check = await isConnected();
+
         if (check.isConnected) {
+          // Already authorised — read the address directly
           const { address: addr } = await getAddress();
           if (addr) {
             setAddress(addr);
             setStatus("connected");
+            return;
           }
         }
+
+        // Extension is present but not yet connected — leave status as idle
+        // so the "Connect" button is shown.
       } catch {
-        // Silently ignore errors on mount — user hasn't interacted yet
+        // isConnected() threw — extension is not installed or inaccessible
+        setStatus("not_installed");
       }
     };
 
@@ -82,26 +92,14 @@ export function useWallet() {
           new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))
         ]);
 
-      // Attempt to detect Freighter by calling the library's isConnected().
-      // If that call throws (no injected provider), fall back to checking
-      // common injected global names. If neither is available, report
-      // not_installed.
-      let detected = false;
+      // Detect Freighter by calling isConnected() from the official API.
+      // This is the ONLY reliable detection method — the extension does not
+      // inject any window.freighter global. If the call throws, the extension
+      // is not installed.
       try {
-        const connectedRes = await withTimeout(isConnected(), 2000, { isConnected: false } as any);
-        // If the library call succeeded, we consider Freighter detectable.
-        detected = true;
+        await withTimeout(isConnected(), 2000, { isConnected: false } as any);
+        // If we reach here the extension responded — it is installed.
       } catch {
-        // Library call threw — check injected globals as a last resort
-        if (
-          typeof window !== "undefined" &&
-          (((window as any).freighter !== undefined) || ((window as any).freighterApi !== undefined))
-        ) {
-          detected = true;
-        }
-      }
-
-      if (!detected) {
         setStatus("not_installed");
         setError("Freighter wallet extension is not installed.");
         return;
