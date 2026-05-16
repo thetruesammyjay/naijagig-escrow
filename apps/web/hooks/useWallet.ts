@@ -82,10 +82,6 @@ export function useWallet() {
           new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))
         ]);
 
-      // Check if the extension is installed by looking for the injected window object
-      const isInstalled = typeof window !== "undefined" && (window as any).freighter !== undefined;
-      
-      // if (!isInstalled) {
       // Attempt to detect Freighter by calling the library's isConnected().
       // If that call throws (no injected provider), fall back to checking
       // common injected global names. If neither is available, report
@@ -95,7 +91,6 @@ export function useWallet() {
         const connectedRes = await withTimeout(isConnected(), 2000, { isConnected: false } as any);
         // If the library call succeeded, we consider Freighter detectable.
         detected = true;
-        // Note: connectedRes.isConnected may be false but the extension exists.
       } catch {
         // Library call threw — check injected globals as a last resort
         if (
