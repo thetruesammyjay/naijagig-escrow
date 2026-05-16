@@ -38,6 +38,24 @@ export function EscrowStatus({ status }: { status: MilestoneStatus }) {
           <i className="bi bi-shield-check mr-1" /> Resolved
         </Badge>
       );
+    case "FUNDED":
+      return (
+        <Badge variant="secondary">
+          <i className="bi bi-shield-lock-fill mr-1 text-green-600" /> Funded
+        </Badge>
+      );
+    case "IN_PROGRESS":
+      return (
+        <Badge variant="secondary">
+          <i className="bi bi-gear-fill mr-1 text-blue-600" /> In Progress
+        </Badge>
+      );
+    case "RELEASED":
+      return (
+        <Badge variant="success">
+          <i className="bi bi-cash-stack mr-1" /> Released
+        </Badge>
+      );
     default:
       return <Badge variant="secondary">Unknown</Badge>;
   }
