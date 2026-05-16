@@ -31,11 +31,19 @@ export function useWallet() {
   const [status, setStatus] = useState<WalletStatus>("idle");
   const [error, setError] = useState<string | null>(null);
 
-  // Check if already connected on mount (persists across page navigations)
+  // Check installation + existing connection on mount
   useEffect(() => {
-    const checkExistingConnection = async () => {
+    const checkOnMount = async () => {
       if (typeof window === "undefined") return;
 
+      // Detect if extension is installed first
+      const isInstalled = (window as any).freighter !== undefined;
+      if (!isInstalled) {
+        setStatus("not_installed");
+        return;
+      }
+
+      // If installed, check if already connected (persists across page navigations)
       try {
         const { isConnected, getAddress } = await import(
           "@stellar/freighter-api"
@@ -49,11 +57,11 @@ export function useWallet() {
           }
         }
       } catch {
-        // Freighter not installed or blocked — silently ignore on mount
+        // Silently ignore errors on mount — user hasn't interacted yet
       }
     };
 
-    checkExistingConnection();
+    checkOnMount();
   }, []);
 
   const connect = useCallback(async () => {
