@@ -75,7 +75,7 @@ export function useWallet() {
         ]);
 
       // Check if the extension is installed (with timeout in case it hangs)
-      const installCheck = await withTimeout(isConnected(), 1500, { isConnected: false }).catch(() => ({ isConnected: false }));
+      const installCheck = await withTimeout(isConnected(), 6000, { isConnected: false }).catch(() => ({ isConnected: false }));
       if (!installCheck.isConnected) {
         setStatus("not_installed");
         setError("Freighter wallet extension is not installed.");
