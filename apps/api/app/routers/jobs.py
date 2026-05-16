@@ -112,7 +112,9 @@ async def read_job(
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     if job.client_id != current_user.id and job.freelancer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Access denied")
+        # Allow viewing if the job is open (no freelancer assigned)
+        if job.freelancer_id is not None:
+            raise HTTPException(status_code=403, detail="Access denied")
     return job
 
 
