@@ -16,8 +16,8 @@ export function Sidebar({ isOpen, setIsOpen, isFreelancer }: SidebarProps) {
   const navLinks = isFreelancer
     ? [
         { name: "Dashboard", href: "/freelancer", icon: "bi-grid-1x2" },
-        { name: "My Jobs", href: "/freelancer/jobs", icon: "bi-briefcase" },
-        { name: "Contracts", href: "/freelancer/contracts", icon: "bi-file-earmark-text" },
+        { name: "Find Jobs", href: "/freelancer/jobs", icon: "bi-search" },
+        { name: "My Contracts", href: "/freelancer/contracts", icon: "bi-briefcase" },
         { name: "Wallet", href: "/freelancer/wallet", icon: "bi-wallet2" },
       ]
     : [

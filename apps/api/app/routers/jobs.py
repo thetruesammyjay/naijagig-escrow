@@ -81,6 +81,21 @@ async def create_job(
     return job
 
 
+@router.get("/open", response_model=list[JobRead])
+async def list_open_jobs(
+    db: Session = Depends(get_db),
+):
+    """Return all open jobs that are funded or draft and have no freelancer assigned yet."""
+    jobs = (
+        db.query(Job)
+        .options(selectinload(Job.milestones))
+        .filter(Job.freelancer_id == None, Job.status.in_(["DRAFT", "FUNDED"]))
+        .order_by(Job.created_at.desc())
+        .all()
+    )
+    return jobs
+
+
 @router.get("/{job_id}", response_model=JobRead)
 async def read_job(
     job_id: str,

@@ -24,6 +24,22 @@ export function useJobs() {
   };
 }
 
+/** Fetch all open jobs that are funded and not yet assigned to a freelancer */
+export function useOpenJobs() {
+  const { data, error, isLoading, mutate } = useSWR<Job[]>(
+    "/jobs/open",
+    fetcher,
+    { revalidateOnFocus: false }
+  );
+
+  return {
+    jobs: data ?? [],
+    isLoading,
+    error,
+    refresh: mutate,
+  };
+}
+
 /** Fetch a single job by ID including its milestones */
 export function useJob(id: string | null) {
   const { data, error, isLoading, mutate } = useSWR<Job>(

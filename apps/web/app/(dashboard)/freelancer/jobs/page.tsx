@@ -4,15 +4,12 @@
  */
 import React from "react";
 import Link from "next/link";
-import { useJobs } from "../../../../hooks/useJob";
+import { useOpenJobs } from "../../../../hooks/useJob";
 import { JobCard } from "../../../../components/jobs/JobCard";
 import { formatDate } from "../../../../lib/utils";
 
 export default function FreelancerJobsPage() {
-  const { jobs, isLoading, error } = useJobs();
-
-  // Filter to only open jobs the freelancer hasn't accepted yet
-  const openJobs = jobs.filter((j) => j.status === "DRAFT" || j.status === "FUNDED");
+  const { jobs: openJobs, isLoading, error } = useOpenJobs();
 
   return (
     <div className="space-y-6">
