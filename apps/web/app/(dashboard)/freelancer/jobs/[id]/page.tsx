@@ -5,7 +5,7 @@
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useJob } from "../../../../../hooks/useJob";
+import { useJob, useAcceptJob } from "../../../../../hooks/useJob";
 import { useMilestone } from "../../../../../hooks/useMilestone";
 import { MilestoneCard } from "../../../../../components/escrow/MilestoneCard";
 import { useToast } from "../../../../../components/ui/toast";
@@ -18,11 +18,22 @@ export default function FreelancerJobDetailPage() {
   const jobId = params?.id as string;
 
   const { job, isLoading, error, refresh } = useJob(jobId);
+  const { acceptJob, isAccepting } = useAcceptJob();
   const { submitMilestone, disputeMilestone, isSubmitting, isDisputing } =
     useMilestone(jobId);
 
   const [submitNote, setSubmitNote] = useState("");
   const [activeSubmit, setActiveSubmit] = useState<string | null>(null);
+
+  const handleAcceptJob = async () => {
+    const result = await acceptJob(jobId);
+    if (result) {
+      toast.success("Job accepted successfully! You can now start submitting milestones.");
+      await refresh();
+    } else {
+      toast.error("Failed to accept job. It might have been taken by someone else.");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -120,6 +131,26 @@ export default function FreelancerJobDetailPage() {
           </div>
         </div>
         <p className="text-gray-600 mt-4 leading-relaxed">{job.description}</p>
+        
+        {!job.freelancerId && (
+          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center justify-between">
+            <div>
+              <h4 className="font-semibold text-green-800">Available Job</h4>
+              <p className="text-sm text-green-700">This job is open. Accept it to start working and earning.</p>
+            </div>
+            <button
+              onClick={handleAcceptJob}
+              disabled={isAccepting}
+              className="px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-green-800 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {isAccepting ? (
+                <><i className="bi bi-arrow-repeat animate-spin" /> Accepting…</>
+              ) : (
+                <><i className="bi bi-check2-circle" /> Accept Job</>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Milestones */}
@@ -179,6 +210,11 @@ export default function FreelancerJobDetailPage() {
                 )}
             </div>
           ))
+        )}
+        {!job.freelancerId && job.milestones.length > 0 && (
+          <div className="mt-4 p-4 text-center text-gray-500 bg-gray-50 border border-gray-100 rounded-xl text-sm">
+            You must accept this job to interact with milestones.
+          </div>
         )}
       </div>
     </div>

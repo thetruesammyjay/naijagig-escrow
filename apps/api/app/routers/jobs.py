@@ -118,6 +118,35 @@ async def read_job(
     return job
 
 
+@router.post("/{job_id}/accept", response_model=JobRead)
+async def accept_job(
+    job_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Allow a freelancer to accept an open job."""
+    if current_user.role != "freelancer":
+        raise HTTPException(status_code=403, detail="Only freelancers can accept jobs")
+
+    job = db.query(Job).filter(Job.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    
+    if job.freelancer_id is not None:
+        raise HTTPException(status_code=400, detail="Job is already assigned to a freelancer")
+    
+    if job.client_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Client cannot accept their own job")
+
+    job.freelancer_id = current_user.id
+    db.commit()
+    db.refresh(job)
+    
+    # Re-query with milestones loaded
+    job = db.query(Job).options(selectinload(Job.milestones)).filter(Job.id == job.id).first()
+    return job
+
+
 @router.patch("/{job_id}", response_model=JobRead)
 async def update_job(
     job_id: str,

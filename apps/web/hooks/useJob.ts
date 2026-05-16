@@ -82,3 +82,29 @@ export function useCreateJob() {
 
   return { createJob, isSubmitting, submitError };
 }
+
+/** Accept an open job as a freelancer */
+export function useAcceptJob() {
+  const [isAccepting, setIsAccepting] = useState(false);
+  const [acceptError, setAcceptError] = useState<string | null>(null);
+
+  const acceptJob = useCallback(
+    async (jobId: string): Promise<Job | null> => {
+      setIsAccepting(true);
+      setAcceptError(null);
+      try {
+        const job = await api.post<Job>(`/jobs/${jobId}/accept`, {});
+        return job;
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Failed to accept job.";
+        setAcceptError(msg);
+        return null;
+      } finally {
+        setIsAccepting(false);
+      }
+    },
+    []
+  );
+
+  return { acceptJob, isAccepting, acceptError };
+}
