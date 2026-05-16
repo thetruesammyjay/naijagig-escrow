@@ -108,10 +108,9 @@ export function useWallet() {
       }
 
       // Request permission — this shows the Freighter popup (allow up to 60s for user to click)
-      const allowed = await Promise.race([
-        // setAllowed() resolves to true if the user clicks "Allow", false if they click "Deny"
-        withTimeout(setAllowed(), 60000, false),
-        new Promise<boolean>((_, reject) => setTimeout(() => reject(new Error("Connection timed out. Please try again.")), 60000))
+      const allowedRes = await Promise.race([
+        setAllowed(),
+        new Promise<any>((_, reject) => setTimeout(() => reject(new Error("Connection timed out. Please try again.")), 60000))
       ]);
 
       // Get the public key
