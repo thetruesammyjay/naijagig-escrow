@@ -77,7 +77,28 @@ export function useWallet() {
       // Check if the extension is installed by looking for the injected window object
       const isInstalled = typeof window !== "undefined" && (window as any).freighter !== undefined;
       
-      if (!isInstalled) {
+      // if (!isInstalled) {
+      // Attempt to detect Freighter by calling the library's isConnected().
+      // If that call throws (no injected provider), fall back to checking
+      // common injected global names. If neither is available, report
+      // not_installed.
+      let detected = false;
+      try {
+        const connectedRes = await withTimeout(isConnected(), 2000, { isConnected: false } as any);
+        // If the library call succeeded, we consider Freighter detectable.
+        detected = true;
+        // Note: connectedRes.isConnected may be false but the extension exists.
+      } catch {
+        // Library call threw — check injected globals as a last resort
+        if (
+          typeof window !== "undefined" &&
+          (((window as any).freighter !== undefined) || ((window as any).freighterApi !== undefined))
+        ) {
+          detected = true;
+        }
+      }
+
+      if (!detected) {
         setStatus("not_installed");
         setError("Freighter wallet extension is not installed.");
         return;
@@ -85,7 +106,8 @@ export function useWallet() {
 
       // Request permission — this shows the Freighter popup (allow up to 60s for user to click)
       const allowed = await Promise.race([
-        setAllowed(),
+        // setAllowed() resolves to true if the user clicks "Allow", false if they click "Deny"
+        withTimeout(setAllowed(), 60000, false),
         new Promise<boolean>((_, reject) => setTimeout(() => reject(new Error("Connection timed out. Please try again.")), 60000))
       ]);
 
