@@ -37,10 +37,22 @@ async def create_job(
     """Create a new job. The client_id is forced to the current authenticated user."""
     from app.models.milestone import Milestone
 
+    # Resolve freelancer — prefer explicit ID, then look up by Stellar address
+    resolved_freelancer_id = payload.freelancer_id
+    if not resolved_freelancer_id and payload.freelancer_stellar_address:
+        freelancer = (
+            db.query(User)
+            .filter(User.stellar_address == payload.freelancer_stellar_address)
+            .first()
+        )
+        if freelancer:
+            resolved_freelancer_id = freelancer.id
+        # If no user found, leave as None — client can assign later
+
     job = Job(
         id=str(uuid.uuid4()),
         client_id=current_user.id,
-        freelancer_id=payload.freelancer_id,
+        freelancer_id=resolved_freelancer_id,
         title=payload.title,
         description=payload.description,
         total_amount=payload.total_amount,

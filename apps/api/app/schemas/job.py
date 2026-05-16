@@ -16,6 +16,7 @@ class JobCreate(JobBase):
 	model_config = ConfigDict(populate_by_name=True)
 
 	freelancer_id: str | None = Field(default=None, alias="freelancerId")
+	freelancer_stellar_address: str | None = Field(default=None, alias="freelancerStellarAddress")
 	milestones: list[MilestoneCreate] = Field(default_factory=list)
 
 	@model_validator(mode="after")

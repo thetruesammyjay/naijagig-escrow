@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class MilestoneBase(BaseModel):
-	sequence: int
+	sequence: int = 0  # assigned by the router; optional on create
 	title: str
 	description: str
 	amount: Decimal
